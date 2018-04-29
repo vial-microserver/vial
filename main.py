@@ -37,8 +37,18 @@ def parse_req(myrequest):
 def exec_req(adr, param_dict):
     """Function to execute the request"""
     print("URL:", adr, param_dict)
-
-
+    if adr[1] == b'write':
+        try:
+            pin = machine.Pin(int(adr[2]), machine.Pin.OUT)
+        except:
+            return "Error"
+        if adr[3] == b'on':
+            pin.on()
+            return "Pin {} is on".format(str(adr[2]))
+        elif adr[3] == b'off':
+            pin.off()
+            return "Pin {} is off".format(str(adr[2]))
+    return "No Action"
     
 
 def main(micropython_optimize=False):
@@ -79,7 +89,8 @@ def main(micropython_optimize=False):
             myrequest = myrequest + h
         print("----------------------")
         url, param_dict = parse_req(myrequest)
-        out = "URL: {}, PARAM: {}".format(str(url), str(param_dict))
+        out = exec_req(url, param_dict)
+        #out = "URL: {}, PARAM: {}".format(str(url), str(param_dict))
         client_stream.write(CONTENT % bytes(out, 'utf-8'))
 
         client_stream.close()
