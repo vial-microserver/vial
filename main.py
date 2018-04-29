@@ -44,10 +44,10 @@ def exec_req(adr, param_dict):
             return "Error"
         if adr[3] == b'on':
             pin.on()
-            return "Pin {} is on".format(str(adr[2]))
+            return "Pin {} is on".format(adr[2].decode("utf-8"))
         elif adr[3] == b'off':
             pin.off()
-            return "Pin {} is off".format(str(adr[2]))
+            return "Pin {} is off".format(adr[2].decode("utf-8"))
     return "No Action"
     
 
@@ -62,7 +62,7 @@ def main(micropython_optimize=False):
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind(addr)
     s.listen(5)
-    print("Listening, connect your browser to http://<this_host>:8080/")
+    print("Listening, connect your browser to http://<this_host>")
 
     counter = 0
     while True:
