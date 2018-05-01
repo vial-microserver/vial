@@ -17,18 +17,19 @@ Access-Control-Allow-Origin: *
 
 def parse_req(myrequest):
     """Function to pass the url and return the path"""
+    myrequest = str(myrequest)
     items = myrequest.strip().split(b'\r\n')
     path = ""
     for item in items:
-        if b'GET' in item:
+        if 'GET' in item:
             adr = item.split()[1]
-            if b'?' in adr: 
-                adr, params = adr.split(b'?', 1)
+            if '?' in adr: 
+                adr, params = adr.split('?', 1)
             else:
                 params = []
-            adr = adr.split(b'/')
+            adr = adr.split('/')
             if params:
-                param_pairs = [p.split(b'=') for p in  params.split(b'&')]
+                param_pairs = [p.split('=') for p in  params.split('&')]
             else:
                 param_pairs = []
     param_dict = {key.lower():value.lower() for [key, value] in param_pairs}
@@ -37,18 +38,36 @@ def parse_req(myrequest):
 def exec_req(adr, param_dict):
     """Function to execute the request"""
     print("URL:", adr, param_dict)
-    if adr[1] == b'write':
+    if adr[1] == 'write':
         try:
             pinid = int(adr[2])
             pin = machine.Pin(pinid, machine.Pin.OUT)
         except:
             return "Error"
-        if adr[3] == b'on':
+        if adr[3] == 'on':
             pin.on()
             return "Pin {} is on".format(str(pinid))
-        elif adr[3] == b'off':
+        elif adr[3] == 'off':
             pin.off()
-            return "Pin {} is off".format(adr[2].decode("utf-8"))
+            return "Pin {} is off".format(str(pinid))
+    elif adr[1] == 'read':
+        try:
+            pinid = int(adr[2])
+
+            if "pull" in param_dict.keys():
+                pull = param_dict["pull"]
+            else:
+                pull = None
+
+            if pull == "up":
+                pull = machine.Pin.PULL_UP
+            elif pull == "down":
+                pull = machine.Pin.PULL_DOWN
+            pin = machine.Pin(pinid, machine.Pin.IN, pull) #todo
+            return pin.value()
+        except:
+            return "Error"
+
     return "No Action"
     
 
@@ -92,7 +111,7 @@ def main(micropython_optimize=False):
         url, param_dict = parse_req(myrequest)
         out = exec_req(url, param_dict)
         #out = "URL: {}, PARAM: {}".format(str(url), str(param_dict))
-        client_stream.write(CONTENT % bytes(out, 'utf-8'))
+        client_stream.write(CONTENT % out)
 
         client_stream.close()
         if not micropython_optimize:
