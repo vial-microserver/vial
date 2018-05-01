@@ -5,6 +5,7 @@ except:
 
 try:
     import machine
+    import dht
 except:
     print("Executing outside micropython")
 
@@ -65,6 +66,14 @@ def exec_req(adr, param_dict):
                 pull = machine.Pin.PULL_DOWN
             pin = machine.Pin(pinid, machine.Pin.IN, pull) #todo
             return pin.value()
+        except:
+            return "Error"
+    elif adr[1] == "measure":
+        try:
+            pinid = int(adr[2])
+            d = dht.DHT11(machine.Pin(pinid))
+            d.measure()
+            return str(d.temperature()) + "," + str(d.humidity())
         except:
             return "Error"
 
