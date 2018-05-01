@@ -5,7 +5,13 @@ ESP8266 doesn't come with a web framework. So I had to repurpose the http_webser
 script to control the GPIO pins.
 
 ## Example usage
-To make pin 2 output and switch it on, send get request to http://<ip-address-of-nodemcu>/write/2/on
+- To make pin 2 output and switch it on, send get request to http://*ip-address-of-nodemcu*/write/2/on
+- To read from pin 2 with PULL_UP, send get request to http://*ip-address-of-nodemcu*/read/2?pull=up
+- To measure from dht, http://*ip-address-of-nodemcu*/measure/2 (Returns two number separated by a comma)
+
+## To Do
+- Return json instead of text
+- Confirm if the read process is not errenous
 
 ### Just so that I remember what I did
 - Connect to nodemcu using picocom or micropython webrepl
