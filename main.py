@@ -31,7 +31,7 @@ def parse_req(myrequest):
                 param_pairs = [p.split(b'=') for p in  params.split(b'&')]
             else:
                 param_pairs = []
-    param_dict = {key:value for [key, value] in param_pairs}
+    param_dict = {key.lower():value.lower() for [key, value] in param_pairs}
     return adr, param_dict
 
 def exec_req(adr, param_dict):
@@ -39,12 +39,13 @@ def exec_req(adr, param_dict):
     print("URL:", adr, param_dict)
     if adr[1] == b'write':
         try:
-            pin = machine.Pin(int(adr[2]), machine.Pin.OUT)
+            pinid = int(adr[2])
+            pin = machine.Pin(pinid, machine.Pin.OUT)
         except:
             return "Error"
         if adr[3] == b'on':
             pin.on()
-            return "Pin {} is on".format(adr[2].decode("utf-8"))
+            return "Pin {} is on".format(str(pinid))
         elif adr[3] == b'off':
             pin.off()
             return "Pin {} is off".format(adr[2].decode("utf-8"))
