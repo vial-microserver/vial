@@ -18,7 +18,7 @@ Access-Control-Allow-Origin: *
 def parse_req(myrequest):
     """Function to pass the url and return the path"""
     myrequest = str(myrequest)
-    items = myrequest.strip().split(b'\r\n')
+    items = myrequest.strip().split('\r\n')
     path = ""
     for item in items:
         if 'GET' in item:
